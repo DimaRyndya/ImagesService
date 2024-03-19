@@ -1,5 +1,6 @@
 import UIKit
 import SnapKit
+import PhotosUI
 
 final class PhotoGalleryViewController: UIViewController {
 
@@ -12,6 +13,9 @@ final class PhotoGalleryViewController: UIViewController {
         imageView.layer.cornerRadius = 25
         imageView.layer.masksToBounds = true
         imageView.image = UIImage(named: "test_photo")
+        imageView.isUserInteractionEnabled = true
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(photoImageViewTapped))
+        imageView.addGestureRecognizer(tapGesture)
         return imageView
     }()
 
@@ -167,5 +171,34 @@ final class PhotoGalleryViewController: UIViewController {
         deleteButton.layer.cornerRadius = deleteButton.bounds.width / 2
         saveButton.layer.cornerRadius = saveButton.bounds.width / 2
     }
+
+    @objc private func photoImageViewTapped() {
+        var configuration = PHPickerConfiguration()
+        configuration.filter = .images
+        configuration.selectionLimit = 1
+
+        let photoPicker = PHPickerViewController(configuration: configuration)
+        photoPicker.delegate = self
+        present(photoPicker, animated: true)
+    }
+}
+
+// MARK: - PHPickerViewController Delegate extension
+
+extension PhotoGalleryViewController: PHPickerViewControllerDelegate {
+
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        guard let selectedImage = results.first else { return }
+
+        selectedImage.itemProvider.loadObject(ofClass: UIImage.self) { image, error in
+            if let image = image as? UIImage {
+                DispatchQueue.main.async {
+                    self.photoImageView.image = image
+                }
+            }
+        }
+        dismiss(animated: true)
+    }
+
 }
 
