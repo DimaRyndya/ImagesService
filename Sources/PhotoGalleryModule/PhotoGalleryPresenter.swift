@@ -7,6 +7,7 @@ protocol PhotoGalleryPresenterDelegate: AnyObject {
     func updateSaveButtonState()
     func updateDeleteButtonState()
     func updateTrashButton(for state: TrashButtonState)
+    func presentDeniedAlert()
 }
 
 enum TrashButtonState {
@@ -27,16 +28,13 @@ final class PhotoGalleryPresenter {
     init(photoService: PhotoService, trashService: TrashImagesService) {
         self.photoService = photoService
         self.trashService = trashService
+        configureCompletionHandlers()
     }
 
     // MARK: - Public
 
     func viewIsLoaded() {
         photoService.getPhotos()
-        photoService.presentImageHandler = { image in
-            guard let image else { return }
-            self.delegate?.presentPhoto(with: image)
-        }
     }
 
     func saveButtonClicked() {
@@ -44,33 +42,48 @@ final class PhotoGalleryPresenter {
     }
 
     func deleteButtonClicked() {
-        photoService.imageDeleteHandler = { [weak self] image in
+        photoService.deletePhoto()
+    }
+
+    func emptyTrashButtonClicked() {
+        trashService.emptyTrash()
+    }
+
+    // MARK: - Private
+
+    private func configureCompletionHandlers() {
+        self.photoService.deniedAlertHandler = { [weak self] in
+            guard let self else { return }
+            self.delegate?.presentDeniedAlert()
+        }
+
+        self.photoService.imageDeleteHandler = { [weak self] image in
             guard let self else { return }
 
             self.trashService.addToTrash(image: image)
             self.delegate?.updateCounterUI(counter: self.trashService.countPhotos())
         }
 
-        photoService.updateSaveButtonHandler = { [weak self] in
+        self.photoService.updateSaveButtonHandler = { [weak self] in
             guard let self else { return }
             self.delegate?.updateSaveButtonState()
         }
-        
-        photoService.updateDeleteButtonHandler = { [weak self] in
+
+        self.photoService.updateDeleteButtonHandler = { [weak self] in
             guard let self else { return }
             self.delegate?.updateDeleteButtonState()
         }
 
-        trashService.didUpdateEmptyTrashHandler = { [weak self] state in
+        self.trashService.didUpdateEmptyTrashHandler = { [weak self] state in
             guard let self else { return }
             self.delegate?.updateTrashButton(for: state)
         }
 
-        photoService.deletePhoto()
-    }
+        self.photoService.presentImageHandler = { image in
+            guard let image else { return }
+            self.delegate?.presentPhoto(with: image)
+        }
 
-    func emptyTrashButtonClicked() {
-        trashService.emptyTrash()
         trashService.didUpdateCounterHandler = { [weak self] in
             guard let self else { return }
             self.delegate?.updateCounterUI(counter: self.trashService.countPhotos())

@@ -55,7 +55,7 @@ final class PhotoGalleryViewController: UIViewController {
     }()
 
     private lazy var emptyTrashButton: UIButton = {
-        let button = UIButton()
+        let button = UIButton(type: .custom)
         button.isEnabled = false
         button.setImage(UIImage(named: "empty_trash_icon"), for: .normal)
         button.setTitle("Empty Trash", for: .normal)
@@ -221,6 +221,20 @@ final class PhotoGalleryViewController: UIViewController {
 // MARK: - PhotoGalleryPresenter Delegate
 
 extension PhotoGalleryViewController: PhotoGalleryPresenterDelegate {
+
+    func presentDeniedAlert() {
+        let alert = UIAlertController(title: "Access denied", message: "This app requires access to Photo Library in order to manage photos. Please go to Setting and change access.", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default) {_ in
+            if let appSettingsURL = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(appSettingsURL, options: [:], completionHandler: nil)
+            }
+        }
+        let cancelAction =  UIAlertAction(title: "Cancel", style: .cancel)
+
+        alert.addAction(okAction)
+        alert.addAction(cancelAction)
+        present(alert, animated: true)
+    }
 
     func presentPhoto(with image: UIImage) {
         DispatchQueue.main.async {

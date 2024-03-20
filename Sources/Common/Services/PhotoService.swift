@@ -2,10 +2,6 @@ import Foundation
 import UIKit
 import Photos
 
-protocol PhotoServiceDelegate: AnyObject {
-    func updateSaveButtonUI()
-}
-
 final class PhotoService {
 
     var images: [PHAsset] = []
@@ -14,8 +10,7 @@ final class PhotoService {
     var imageDeleteHandler: ((PHAsset) -> Void)?
     var updateSaveButtonHandler: (() -> Void)?
     var updateDeleteButtonHandler: (() -> Void)?
-
-    weak var delegate: PhotoServiceDelegate?
+    var deniedAlertHandler: (() -> Void)?
 
     func getPhotos() {
         requestPhotoLibraryAccess()
@@ -33,15 +28,16 @@ final class PhotoService {
     private func handlePhotoLibraryStatus(for status: PHAuthorizationStatus) {
         switch status {
         case .notDetermined:
-            print("notDetermined")
+            break
         case .restricted:
-            print("restricted")
+            break
         case .denied:
+            deniedAlertHandler?()
             print("denied")
         case .authorized:
             fetchPhotos()
         case .limited:
-            print("limited")
+            fetchPhotos()
         @unknown default:
             break
         }
