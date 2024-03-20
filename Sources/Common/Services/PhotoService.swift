@@ -2,12 +2,20 @@ import Foundation
 import UIKit
 import Photos
 
+protocol PhotoServiceDelegate: AnyObject {
+    func updateSaveButtonUI()
+}
+
 final class PhotoService {
 
     var images: [PHAsset] = []
     var currentIndex = 0
     var presentImageHandler: ((UIImage?) -> Void)?
     var imageDeleteHandler: ((PHAsset) -> Void)?
+    var updateSaveButtonHandler: (() -> Void)?
+    var updateDeleteButtonHandler: (() -> Void)?
+
+    weak var delegate: PhotoServiceDelegate?
 
     func getPhotos() {
         requestPhotoLibraryAccess()
@@ -87,9 +95,14 @@ final class PhotoService {
         self.imageDeleteHandler?(image)
         images.remove(at: currentIndex)
 
+        if images.count == 1 {
+            updateSaveButtonHandler?()
+        }
+
         if images.isEmpty {
             let image = UIImage(named: "empty_state_icon")
-            self.presentImageHandler?(image)
+            presentImageHandler?(image)
+            updateDeleteButtonHandler?()
             return
         }
 

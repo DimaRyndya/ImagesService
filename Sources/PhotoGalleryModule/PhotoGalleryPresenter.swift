@@ -4,6 +4,13 @@ import UIKit
 protocol PhotoGalleryPresenterDelegate: AnyObject {
     func presentPhoto(with image: UIImage)
     func updateCounterUI(counter: Int)
+    func updateSaveButtonState()
+    func updateDeleteButtonState()
+    func updateTrashButton(for state: TrashButtonState)
+}
+
+enum TrashButtonState {
+    case enabled, disabled
 }
 
 final class PhotoGalleryPresenter {
@@ -43,6 +50,22 @@ final class PhotoGalleryPresenter {
             self.trashService.addToTrash(image: image)
             self.delegate?.updateCounterUI(counter: self.trashService.countPhotos())
         }
+
+        photoService.updateSaveButtonHandler = { [weak self] in
+            guard let self else { return }
+            self.delegate?.updateSaveButtonState()
+        }
+        
+        photoService.updateDeleteButtonHandler = { [weak self] in
+            guard let self else { return }
+            self.delegate?.updateDeleteButtonState()
+        }
+
+        trashService.didUpdateEmptyTrashHandler = { [weak self] state in
+            guard let self else { return }
+            self.delegate?.updateTrashButton(for: state)
+        }
+
         photoService.deletePhoto()
     }
 

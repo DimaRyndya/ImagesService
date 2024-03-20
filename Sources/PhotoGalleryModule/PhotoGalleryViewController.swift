@@ -56,6 +56,7 @@ final class PhotoGalleryViewController: UIViewController {
 
     private lazy var emptyTrashButton: UIButton = {
         let button = UIButton()
+        button.isEnabled = false
         button.setImage(UIImage(named: "empty_trash_icon"), for: .normal)
         button.setTitle("Empty Trash", for: .normal)
         button.setTitleColor(UIColor(red: 160 / 255, green: 168 / 255, blue: 212 / 255, alpha: 1), for: .normal)
@@ -220,16 +221,36 @@ final class PhotoGalleryViewController: UIViewController {
 // MARK: - PhotoGalleryPresenter Delegate
 
 extension PhotoGalleryViewController: PhotoGalleryPresenterDelegate {
-    
+
     func presentPhoto(with image: UIImage) {
         DispatchQueue.main.async {
             self.photoImageView.image = image
         }
     }
-    
+
     func updateCounterUI(counter: Int) {
         DispatchQueue.main.async {
             self.counterLabel.text = "\(counter)"
+        }
+    }
+
+    func updateSaveButtonState() {
+        saveButton.isEnabled = false
+    }
+
+    func updateDeleteButtonState() {
+        deleteButton.isEnabled = false
+    }
+
+    func updateTrashButton(for state: TrashButtonState) {
+        DispatchQueue.main.async {
+            switch state {
+            case .enabled:
+                self.emptyTrashButton.isEnabled = true
+            case .disabled:
+                self.emptyTrashButton.isEnabled = false
+            }
+
         }
     }
 }
