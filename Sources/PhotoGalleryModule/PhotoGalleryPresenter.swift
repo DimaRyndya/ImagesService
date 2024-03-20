@@ -48,6 +48,9 @@ final class PhotoGalleryPresenter {
 
     func emptyTrashButtonClicked() {
         trashService.emptyTrash()
-        delegate?.updateCounterUI(counter: trashService.countPhotos())
+        trashService.didUpdateCounterHandler = { [weak self] in
+            guard let self else { return }
+            self.delegate?.updateCounterUI(counter: self.trashService.countPhotos())
+        }
     }
 }

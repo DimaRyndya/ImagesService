@@ -3,7 +3,12 @@ import Photos
 
 final class TrashImagesService {
 
+    // MARK: - Properties
+
     var trash: [PHAsset] = []
+    var didUpdateCounterHandler: (() -> Void)?
+
+    // MARK: - Public
 
     func addToTrash(image: PHAsset) {
         trash.append(image)
@@ -31,7 +36,11 @@ final class TrashImagesService {
             if let error = error {
                 debugPrint(error.localizedDescription)
             }
+
+            if success {
+                self.trash.removeAll()
+                self.didUpdateCounterHandler?()
+            }
         }
-        trash.removeAll()
     }
 }

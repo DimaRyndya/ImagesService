@@ -10,7 +10,7 @@ final class PhotoService {
     var imageDeleteHandler: ((PHAsset) -> Void)?
 
     func getPhotos() {
-        fetchPhotos()
+        requestPhotoLibraryAccess()
     }
 
     private func requestPhotoLibraryAccess() {
@@ -25,15 +25,15 @@ final class PhotoService {
     private func handlePhotoLibraryStatus(for status: PHAuthorizationStatus) {
         switch status {
         case .notDetermined:
-            break
+            print("notDetermined")
         case .restricted:
-            break
+            print("restricted")
         case .denied:
-            break
+            print("denied")
         case .authorized:
-            break
+            fetchPhotos()
         case .limited:
-            break
+            print("limited")
         @unknown default:
             break
         }

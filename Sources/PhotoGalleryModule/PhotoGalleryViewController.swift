@@ -220,15 +220,17 @@ final class PhotoGalleryViewController: UIViewController {
 // MARK: - PhotoGalleryPresenter Delegate
 
 extension PhotoGalleryViewController: PhotoGalleryPresenterDelegate {
-
+    
     func presentPhoto(with image: UIImage) {
         DispatchQueue.main.async {
             self.photoImageView.image = image
         }
     }
-
+    
     func updateCounterUI(counter: Int) {
-        counterLabel.text = "\(counter)"
+        DispatchQueue.main.async {
+            self.counterLabel.text = "\(counter)"
+        }
     }
 }
 
