@@ -26,7 +26,7 @@ final class PhotoGalleryPresenter {
 
     func viewIsLoaded() {
         photoService.getPhotos()
-        photoService.imageRequestHandler = { image in
+        photoService.presentImageHandler = { image in
             guard let image else { return }
             self.delegate?.presentPhoto(with: image)
         }

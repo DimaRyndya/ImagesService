@@ -6,7 +6,7 @@ final class PhotoService {
 
     var images: [PHAsset] = []
     var currentIndex = 0
-    var imageRequestHandler: ((UIImage?) -> Void)?
+    var presentImageHandler: ((UIImage?) -> Void)?
     var imageDeleteHandler: ((PHAsset) -> Void)?
 
     func getPhotos() {
@@ -57,14 +57,13 @@ final class PhotoService {
         let requestOptions = PHImageRequestOptions()
         requestOptions.isSynchronous = true
 
-
         PHImageManager.default().requestImage(
             for: asset,
             targetSize: CGSize(width: 300, height: 450),
             contentMode: .aspectFill,
             options: requestOptions) { image, _ in
                 DispatchQueue.main.async {
-                    self.imageRequestHandler?(image)
+                    self.presentImageHandler?(image)
                 }
             }
     }
@@ -87,6 +86,13 @@ final class PhotoService {
         let image = images[currentIndex]
         self.imageDeleteHandler?(image)
         images.remove(at: currentIndex)
+
+        if images.isEmpty {
+            let image = UIImage(named: "empty_state_icon")
+            self.presentImageHandler?(image)
+            return
+        }
+
         currentIndex -= 1
         showNextPhoto()
     }
