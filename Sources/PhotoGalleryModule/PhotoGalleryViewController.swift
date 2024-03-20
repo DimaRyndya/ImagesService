@@ -11,12 +11,11 @@ final class PhotoGalleryViewController: UIViewController {
 
     private lazy var photoImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "test_photo")
+        imageView.image = UIImage(named: "empty_state_icon")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 25
         imageView.layer.masksToBounds = true
-        imageView.image = UIImage()
         imageView.isUserInteractionEnabled = true
         return imageView
     }()
@@ -166,6 +165,8 @@ final class PhotoGalleryViewController: UIViewController {
             maker.width.equalTo(65)
         }
 
+        configureEmptyTrashButtonAction()
+
         trashInfoStackView.addArrangedSubview(imagesCounterStackView)
         imagesCounterStackView.addArrangedSubview(counterLabel)
         imagesCounterStackView.addArrangedSubview(imagesInTrashLabel)
@@ -201,6 +202,18 @@ final class PhotoGalleryViewController: UIViewController {
 
     private func deleteButtonTapped() {
         presenter.deleteButtonClicked()
+    }
+
+    private func configureEmptyTrashButtonAction() {
+        let action = UIAction { [weak self] _ in
+            guard let self else { return }
+            self.emptyTrashButtonTapped()
+        }
+        emptyTrashButton.addAction(action, for: .primaryActionTriggered)
+    }
+
+    private func emptyTrashButtonTapped() {
+        presenter.emptyTrashButtonClicked()
     }
 }
 

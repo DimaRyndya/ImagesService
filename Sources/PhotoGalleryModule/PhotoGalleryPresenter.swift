@@ -45,4 +45,9 @@ final class PhotoGalleryPresenter {
         }
         photoService.deletePhoto()
     }
+
+    func emptyTrashButtonClicked() {
+        trashService.emptyTrash()
+        delegate?.updateCounterUI(counter: trashService.countPhotos())
+    }
 }
