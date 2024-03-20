@@ -1,8 +1,11 @@
 import UIKit
 import SnapKit
-import PhotosUI
 
 final class PhotoGalleryViewController: UIViewController {
+
+    // MARK: - Properties
+
+    var presenter: PhotoGalleryPresenter!
 
     // MARK: - UI Elements
 
@@ -14,8 +17,6 @@ final class PhotoGalleryViewController: UIViewController {
         imageView.layer.masksToBounds = true
         imageView.image = UIImage(named: "test_photo")
         imageView.isUserInteractionEnabled = true
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(photoImageViewTapped))
-        imageView.addGestureRecognizer(tapGesture)
         return imageView
     }()
 
@@ -98,6 +99,7 @@ final class PhotoGalleryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        presenter.viewIsLoaded()
     }
 
     override func viewDidLayoutSubviews() {
@@ -141,6 +143,21 @@ final class PhotoGalleryViewController: UIViewController {
         saveButton.snp.makeConstraints { maker in
             maker.width.height.equalTo(60)
         }
+        configureSaveButtonAction()
+    }
+
+    // MARK: - Buttons action configuration
+
+    private func configureSaveButtonAction() {
+        let action = UIAction { [weak self] _ in
+            guard let self else { return }
+            self.saveButtonTapped()
+        }
+        saveButton.addAction(action, for: .primaryActionTriggered)
+    }
+
+    private func saveButtonTapped() {
+        presenter.saveButtonClicked()
     }
 
     private func configureTrashInfoStackView() {
@@ -171,34 +188,14 @@ final class PhotoGalleryViewController: UIViewController {
         deleteButton.layer.cornerRadius = deleteButton.bounds.width / 2
         saveButton.layer.cornerRadius = saveButton.bounds.width / 2
     }
-
-    @objc private func photoImageViewTapped() {
-        var configuration = PHPickerConfiguration()
-        configuration.filter = .images
-        configuration.selectionLimit = 1
-
-        let photoPicker = PHPickerViewController(configuration: configuration)
-        photoPicker.delegate = self
-        present(photoPicker, animated: true)
-    }
 }
 
-// MARK: - PHPickerViewController Delegate extension
+extension PhotoGalleryViewController: PhotoGalleryPresenterDelegate {
 
-extension PhotoGalleryViewController: PHPickerViewControllerDelegate {
-
-    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        guard let selectedImage = results.first else { return }
-
-        selectedImage.itemProvider.loadObject(ofClass: UIImage.self) { image, error in
-            if let image = image as? UIImage {
-                DispatchQueue.main.async {
-                    self.photoImageView.image = image
-                }
-            }
+    func presentPhoto(with image: UIImage) {
+        DispatchQueue.main.async {
+            self.photoImageView.image = image
         }
-        dismiss(animated: true)
     }
-
 }
 
