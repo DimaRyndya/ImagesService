@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1D3BC9CD2BAB16EB00591F20 /* TrashImagesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D3BC9CC2BAB16EB00591F20 /* TrashImagesService.swift */; };
 		1D87BD572BAA2CDA00D8F681 /* PhotoGalleryPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D87BD562BAA2CDA00D8F681 /* PhotoGalleryPresenter.swift */; };
 		1D87BD5B2BAA2D4000D8F681 /* PhotoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D87BD5A2BAA2D4000D8F681 /* PhotoService.swift */; };
 		1D87BD5D2BAAE7BB00D8F681 /* UIBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D87BD5C2BAAE7BB00D8F681 /* UIBuilder.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1D3BC9CC2BAB16EB00591F20 /* TrashImagesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrashImagesService.swift; sourceTree = "<group>"; };
 		1D87BD562BAA2CDA00D8F681 /* PhotoGalleryPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGalleryPresenter.swift; sourceTree = "<group>"; };
 		1D87BD5A2BAA2D4000D8F681 /* PhotoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoService.swift; sourceTree = "<group>"; };
 		1D87BD5C2BAAE7BB00D8F681 /* UIBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBuilder.swift; sourceTree = "<group>"; };
@@ -55,6 +57,7 @@
 			isa = PBXGroup;
 			children = (
 				1D87BD5A2BAA2D4000D8F681 /* PhotoService.swift */,
+				1D3BC9CC2BAB16EB00591F20 /* TrashImagesService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -191,6 +194,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1D3BC9CD2BAB16EB00591F20 /* TrashImagesService.swift in Sources */,
 				1D87BD5B2BAA2D4000D8F681 /* PhotoService.swift in Sources */,
 				1D87BD572BAA2CDA00D8F681 /* PhotoGalleryPresenter.swift in Sources */,
 				1DE469472BA8E38400D0C676 /* PhotoGalleryViewController.swift in Sources */,

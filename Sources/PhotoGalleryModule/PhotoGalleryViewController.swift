@@ -11,11 +11,12 @@ final class PhotoGalleryViewController: UIViewController {
 
     private lazy var photoImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.image = UIImage(named: "test_photo")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 25
         imageView.layer.masksToBounds = true
-        imageView.image = UIImage(named: "test_photo")
+        imageView.image = UIImage()
         imageView.isUserInteractionEnabled = true
         return imageView
     }()
@@ -144,20 +145,7 @@ final class PhotoGalleryViewController: UIViewController {
             maker.width.height.equalTo(60)
         }
         configureSaveButtonAction()
-    }
-
-    // MARK: - Buttons action configuration
-
-    private func configureSaveButtonAction() {
-        let action = UIAction { [weak self] _ in
-            guard let self else { return }
-            self.saveButtonTapped()
-        }
-        saveButton.addAction(action, for: .primaryActionTriggered)
-    }
-
-    private func saveButtonTapped() {
-        presenter.saveButtonClicked()
+        configureDeleteButtonAction()
     }
 
     private func configureTrashInfoStackView() {
@@ -188,7 +176,35 @@ final class PhotoGalleryViewController: UIViewController {
         deleteButton.layer.cornerRadius = deleteButton.bounds.width / 2
         saveButton.layer.cornerRadius = saveButton.bounds.width / 2
     }
+
+    // MARK: - Buttons action configuration
+
+    private func configureSaveButtonAction() {
+        let action = UIAction { [weak self] _ in
+            guard let self else { return }
+            self.saveButtonTapped()
+        }
+        saveButton.addAction(action, for: .primaryActionTriggered)
+    }
+
+    private func saveButtonTapped() {
+        presenter.saveButtonClicked()
+    }
+
+    private func configureDeleteButtonAction() {
+        let action = UIAction { [weak self] _ in
+            guard let self else { return }
+            self.deleteButtonTapped()
+        }
+        deleteButton.addAction(action, for: .primaryActionTriggered)
+    }
+
+    private func deleteButtonTapped() {
+        presenter.deleteButtonClicked()
+    }
 }
+
+// MARK: - PhotoGalleryPresenter Delegate
 
 extension PhotoGalleryViewController: PhotoGalleryPresenterDelegate {
 
@@ -196,6 +212,10 @@ extension PhotoGalleryViewController: PhotoGalleryPresenterDelegate {
         DispatchQueue.main.async {
             self.photoImageView.image = image
         }
+    }
+
+    func updateCounterUI(counter: Int) {
+        counterLabel.text = "\(counter)"
     }
 }
 
