@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		1D3BC9CD2BAB16EB00591F20 /* TrashImagesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D3BC9CC2BAB16EB00591F20 /* TrashImagesService.swift */; };
 		1D87BD572BAA2CDA00D8F681 /* PhotoGalleryPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D87BD562BAA2CDA00D8F681 /* PhotoGalleryPresenter.swift */; };
-		1D87BD5B2BAA2D4000D8F681 /* PhotoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D87BD5A2BAA2D4000D8F681 /* PhotoService.swift */; };
-		1D87BD5D2BAAE7BB00D8F681 /* UIBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D87BD5C2BAAE7BB00D8F681 /* UIBuilder.swift */; };
+		1D87BD5B2BAA2D4000D8F681 /* GalleryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D87BD5A2BAA2D4000D8F681 /* GalleryService.swift */; };
+		1D87BD5D2BAAE7BB00D8F681 /* AppBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D87BD5C2BAAE7BB00D8F681 /* AppBuilder.swift */; };
 		1DE469432BA8E38400D0C676 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DE469422BA8E38400D0C676 /* AppDelegate.swift */; };
 		1DE469452BA8E38400D0C676 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DE469442BA8E38400D0C676 /* SceneDelegate.swift */; };
 		1DE469472BA8E38400D0C676 /* PhotoGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DE469462BA8E38400D0C676 /* PhotoGalleryViewController.swift */; };
@@ -22,8 +22,8 @@
 /* Begin PBXFileReference section */
 		1D3BC9CC2BAB16EB00591F20 /* TrashImagesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrashImagesService.swift; sourceTree = "<group>"; };
 		1D87BD562BAA2CDA00D8F681 /* PhotoGalleryPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGalleryPresenter.swift; sourceTree = "<group>"; };
-		1D87BD5A2BAA2D4000D8F681 /* PhotoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoService.swift; sourceTree = "<group>"; };
-		1D87BD5C2BAAE7BB00D8F681 /* UIBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBuilder.swift; sourceTree = "<group>"; };
+		1D87BD5A2BAA2D4000D8F681 /* GalleryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryService.swift; sourceTree = "<group>"; };
+		1D87BD5C2BAAE7BB00D8F681 /* AppBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBuilder.swift; sourceTree = "<group>"; };
 		1DE4693F2BA8E38400D0C676 /* ImagesService.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImagesService.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DE469422BA8E38400D0C676 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1DE469442BA8E38400D0C676 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -56,7 +56,7 @@
 		1D87BD592BAA2D2D00D8F681 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				1D87BD5A2BAA2D4000D8F681 /* PhotoService.swift */,
+				1D87BD5A2BAA2D4000D8F681 /* GalleryService.swift */,
 				1D3BC9CC2BAB16EB00591F20 /* TrashImagesService.swift */,
 			);
 			path = Services;
@@ -104,7 +104,7 @@
 			children = (
 				1DE469422BA8E38400D0C676 /* AppDelegate.swift */,
 				1DE469442BA8E38400D0C676 /* SceneDelegate.swift */,
-				1D87BD5C2BAAE7BB00D8F681 /* UIBuilder.swift */,
+				1D87BD5C2BAAE7BB00D8F681 /* AppBuilder.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -195,12 +195,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				1D3BC9CD2BAB16EB00591F20 /* TrashImagesService.swift in Sources */,
-				1D87BD5B2BAA2D4000D8F681 /* PhotoService.swift in Sources */,
+				1D87BD5B2BAA2D4000D8F681 /* GalleryService.swift in Sources */,
 				1D87BD572BAA2CDA00D8F681 /* PhotoGalleryPresenter.swift in Sources */,
 				1DE469472BA8E38400D0C676 /* PhotoGalleryViewController.swift in Sources */,
 				1DE469432BA8E38400D0C676 /* AppDelegate.swift in Sources */,
 				1DE469452BA8E38400D0C676 /* SceneDelegate.swift in Sources */,
-				1D87BD5D2BAAE7BB00D8F681 /* UIBuilder.swift in Sources */,
+				1D87BD5D2BAAE7BB00D8F681 /* AppBuilder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,15 +1,21 @@
 import Foundation
 import Photos
 
-final class TrashImagesService {
+// MARK: - Protocols
 
-    // MARK: - Properties
+protocol TrashImagesServiceProtocol {
+    var trashImagesCount: Int { get }
+    func addToTrash(image: PHAsset)
+    func emptyTrash(completion: @escaping (Bool) -> Void)
+}
 
-    private(set) var trash: [PHAsset] = []
-    
-    var trashImagesCount: Int {
-        trash.count
-    }
+// MARK: - Implementation
+
+final class TrashImagesService: TrashImagesServiceProtocol {
+
+    var trashImagesCount: Int { trash.count }
+
+    private var trash: [PHAsset] = []
 
     // MARK: - Public
 
@@ -17,7 +23,7 @@ final class TrashImagesService {
         trash.append(image)
     }
 
-    func emptyTrash(completion: @escaping () -> Void) {
+    func emptyTrash(completion: @escaping (Bool) -> Void) {
         let library = PHPhotoLibrary.shared()
         var photosToDelete: [PHAsset] = []
 
@@ -36,7 +42,7 @@ final class TrashImagesService {
                 if success {
                     self?.trash.removeAll()
                 }
-                completion()
+                completion(success)
             }
         }
     }

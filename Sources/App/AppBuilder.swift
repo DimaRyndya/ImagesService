@@ -1,18 +1,14 @@
 import UIKit
 
-final class UIBuilder {
-    
-    // MARK: - Properties
+final class AppBuilder {
 
     var window: UIWindow?
-    let photoService = PhotoService()
+    let galleryService = GalleryService()
     let trashService = TrashImagesService()
-
-    // MARK: - Public
 
     func createRootViewController(window: UIWindow) -> UIViewController {
         let viewController = PhotoGalleryViewController()
-        let presenter = PhotoGalleryPresenter(photoService: photoService, trashService: trashService)
+        let presenter = PhotoGalleryPresenter(galleryService: galleryService, trashService: trashService)
         presenter.output = viewController
         viewController.presenter = presenter
         self.window = window

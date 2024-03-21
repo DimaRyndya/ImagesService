@@ -3,9 +3,7 @@ import SnapKit
 
 final class PhotoGalleryViewController: UIViewController {
 
-    // MARK: - Properties
-
-    var presenter: PhotoGalleryPresenter!
+    var presenter: PhotoGalleryPresenterInput!
 
     // MARK: - UI Elements
 
@@ -30,6 +28,7 @@ final class PhotoGalleryViewController: UIViewController {
     private lazy var deleteButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "bin_icon"), for: .normal)
+        button.layer.cornerRadius = 30
         button.backgroundColor = .systemRed
         button.clipsToBounds = true
         return button
@@ -38,6 +37,7 @@ final class PhotoGalleryViewController: UIViewController {
     private lazy var saveButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "checkmark_icon"), for: .normal)
+        button.layer.cornerRadius = 30
         button.backgroundColor = .systemMint
         button.clipsToBounds = true
         return button
@@ -101,11 +101,6 @@ final class PhotoGalleryViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         presenter.viewIsLoaded()
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        applyCornerRadiusToButtons()
     }
 
     // MARK: - Private
@@ -174,57 +169,44 @@ final class PhotoGalleryViewController: UIViewController {
         trashInfoStackView.addArrangedSubview(emptyTrashButton)
     }
 
-    private func applyCornerRadiusToButtons() {
-        deleteButton.layer.cornerRadius = deleteButton.bounds.width / 2
-        saveButton.layer.cornerRadius = saveButton.bounds.width / 2
-    }
-
     // MARK: - Buttons action configuration
 
     private func configureSaveButtonAction() {
         let action = UIAction { [weak self] _ in
             guard let self else { return }
-            self.saveButtonTapped()
+            self.presenter.saveButtonTapped()
         }
         saveButton.addAction(action, for: .primaryActionTriggered)
-    }
-
-    private func saveButtonTapped() {
-        presenter.saveButtonClicked()
     }
 
     private func configureDeleteButtonAction() {
         let action = UIAction { [weak self] _ in
             guard let self else { return }
-            self.deleteButtonTapped()
+            self.presenter.deleteButtonTapped()
         }
         deleteButton.addAction(action, for: .primaryActionTriggered)
-    }
-
-    private func deleteButtonTapped() {
-        presenter.deleteButtonClicked()
     }
 
     private func configureEmptyTrashButtonAction() {
         let action = UIAction { [weak self] _ in
             guard let self else { return }
-            self.emptyTrashButtonTapped()
+            self.presenter.emptyTrashButtonTapped()
         }
         emptyTrashButton.addAction(action, for: .primaryActionTriggered)
     }
-
-    private func emptyTrashButtonTapped() {
-        presenter.emptyTrashButtonClicked()
-    }
 }
 
-// MARK: - PhotoGalleryPresenter Delegate
+// MARK: - PhotoGalleryPresenter Output
 
 extension PhotoGalleryViewController: PhotoGalleryPresenterOutput {
 
     func presentDeniedAlert() {
-        let alert = UIAlertController(title: "Access denied", message: "This app requires access to Photo Library in order to manage photos. Please go to Setting and change access.", preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK", style: .default) {_ in
+        let alert = UIAlertController(
+            title: "Access denied",
+            message: "This app requires access to Photo Library in order to manage photos. Please go to Setting and change access.",
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(title: "OK", style: .default) { _ in
             if let appSettingsURL = URL(string: UIApplication.openSettingsURLString) {
                 UIApplication.shared.open(appSettingsURL, options: [:], completionHandler: nil)
             }
@@ -233,10 +215,11 @@ extension PhotoGalleryViewController: PhotoGalleryPresenterOutput {
 
         alert.addAction(okAction)
         alert.addAction(cancelAction)
+
         present(alert, animated: true)
     }
 
-    func presentImage(_ image: UIImage) {
+    func presentImage(_ image: UIImage?) {
         DispatchQueue.main.async {
             self.photoImageView.image = image
         }
@@ -261,8 +244,8 @@ extension PhotoGalleryViewController: PhotoGalleryPresenterOutput {
     }
 
     func updateTrashButton(isEnabled: Bool) {
-        self.emptyTrashButton.isEnabled = isEnabled
-
+        DispatchQueue.main.async {
+            self.emptyTrashButton.isEnabled = isEnabled
+        }
     }
 }
-
