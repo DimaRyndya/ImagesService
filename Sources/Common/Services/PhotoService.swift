@@ -6,7 +6,9 @@ final class PhotoService: NSObject {
 
     // MARK: - Properties
 
-    var images: [PHAsset] = []
+    private(set) var images: [PHAsset] = []
+
+    
     var currentIndex = 0
     var presentImageHandler: ((UIImage?) -> Void)?
     var imageDeleteHandler: ((PHAsset) -> Void)?

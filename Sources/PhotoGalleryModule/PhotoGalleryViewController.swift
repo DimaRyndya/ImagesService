@@ -220,7 +220,7 @@ final class PhotoGalleryViewController: UIViewController {
 
 // MARK: - PhotoGalleryPresenter Delegate
 
-extension PhotoGalleryViewController: PhotoGalleryPresenterDelegate {
+extension PhotoGalleryViewController: PhotoGalleryPresenterOutput {
 
     func presentDeniedAlert() {
         let alert = UIAlertController(title: "Access denied", message: "This app requires access to Photo Library in order to manage photos. Please go to Setting and change access.", preferredStyle: .alert)

@@ -13,7 +13,7 @@ final class UIBuilder {
     func createRootViewController(window: UIWindow) -> UIViewController {
         let viewController = PhotoGalleryViewController()
         let presenter = PhotoGalleryPresenter(photoService: photoService, trashService: trashService)
-        presenter.delegate = viewController
+        presenter.output = viewController
         viewController.presenter = presenter
         self.window = window
         return viewController

@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-protocol PhotoGalleryPresenterDelegate: AnyObject {
+protocol PhotoGalleryPresenterOutput: AnyObject {
     func presentPhoto(with image: UIImage)
     func updateCounterUI(counter: Int)
     func updateSaveButtonState(for state: SaveButtonState)
@@ -29,7 +29,7 @@ final class PhotoGalleryPresenter {
     let photoService: PhotoService
     let trashService: TrashImagesService
 
-    weak var delegate: PhotoGalleryPresenterDelegate?
+    weak var output: PhotoGalleryPresenterOutput?
 
     // MARK: - Init
 
@@ -62,39 +62,39 @@ final class PhotoGalleryPresenter {
     private func configureCompletionHandlers() {
         self.photoService.deniedAlertHandler = { [weak self] in
             guard let self else { return }
-            self.delegate?.presentDeniedAlert()
+            self.output?.presentDeniedAlert()
         }
 
         self.photoService.imageDeleteHandler = { [weak self] image in
             guard let self else { return }
 
             self.trashService.addToTrash(image: image)
-            self.delegate?.updateCounterUI(counter: self.trashService.countPhotos())
+            self.output?.updateCounterUI(counter: self.trashService.countPhotos())
         }
 
         self.photoService.updateSaveButtonHandler = { [weak self] state in
             guard let self else { return }
-            self.delegate?.updateSaveButtonState(for: state)
+            self.output?.updateSaveButtonState(for: state)
         }
 
         self.photoService.updateDeleteButtonHandler = { [weak self] state in
             guard let self else { return }
-            self.delegate?.updateDeleteButtonState(for: state)
+            self.output?.updateDeleteButtonState(for: state)
         }
 
         self.trashService.didUpdateEmptyTrashHandler = { [weak self] state in
             guard let self else { return }
-            self.delegate?.updateTrashButton(for: state)
+            self.output?.updateTrashButton(for: state)
         }
 
         self.photoService.presentImageHandler = { image in
             guard let image else { return }
-            self.delegate?.presentPhoto(with: image)
+            self.output?.presentPhoto(with: image)
         }
 
         trashService.didUpdateCounterHandler = { [weak self] in
             guard let self else { return }
-            self.delegate?.updateCounterUI(counter: self.trashService.countPhotos())
+            self.output?.updateCounterUI(counter: self.trashService.countPhotos())
         }
     }
 }

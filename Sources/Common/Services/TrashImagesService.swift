@@ -5,7 +5,7 @@ final class TrashImagesService {
 
     // MARK: - Properties
 
-    var trash: [PHAsset] = []
+    private(set) var trash: [PHAsset] = []
     var didUpdateCounterHandler: (() -> Void)?
     var didUpdateEmptyTrashHandler: ((TrashButtonState) -> Void)?
 
