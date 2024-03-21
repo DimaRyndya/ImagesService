@@ -248,12 +248,26 @@ extension PhotoGalleryViewController: PhotoGalleryPresenterDelegate {
         }
     }
 
-    func updateSaveButtonState() {
-        saveButton.isEnabled = false
+    func updateSaveButtonState(for state: SaveButtonState) {
+        DispatchQueue.main.async {
+            switch state {
+            case .enabled:
+                self.saveButton.isEnabled = true
+            case .disabled:
+                self.saveButton.isEnabled = false
+            }
+        }
     }
 
-    func updateDeleteButtonState() {
-        deleteButton.isEnabled = false
+    func updateDeleteButtonState(for state: DeleteButtonState) {
+        DispatchQueue.main.async {
+            switch state {
+            case .enabled:
+                self.deleteButton.isEnabled = true
+            case .disabled:
+                self.deleteButton.isEnabled = false
+            }
+        }
     }
 
     func updateTrashButton(for state: TrashButtonState) {
@@ -264,7 +278,6 @@ extension PhotoGalleryViewController: PhotoGalleryPresenterDelegate {
             case .disabled:
                 self.emptyTrashButton.isEnabled = false
             }
-
         }
     }
 }

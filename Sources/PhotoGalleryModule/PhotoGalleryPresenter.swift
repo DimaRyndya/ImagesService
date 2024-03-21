@@ -4,13 +4,21 @@ import UIKit
 protocol PhotoGalleryPresenterDelegate: AnyObject {
     func presentPhoto(with image: UIImage)
     func updateCounterUI(counter: Int)
-    func updateSaveButtonState()
-    func updateDeleteButtonState()
+    func updateSaveButtonState(for state: SaveButtonState)
+    func updateDeleteButtonState(for state: DeleteButtonState)
     func updateTrashButton(for state: TrashButtonState)
     func presentDeniedAlert()
 }
 
 enum TrashButtonState {
+    case enabled, disabled
+}
+
+enum SaveButtonState {
+    case enabled, disabled
+}
+
+enum DeleteButtonState {
     case enabled, disabled
 }
 
@@ -64,14 +72,14 @@ final class PhotoGalleryPresenter {
             self.delegate?.updateCounterUI(counter: self.trashService.countPhotos())
         }
 
-        self.photoService.updateSaveButtonHandler = { [weak self] in
+        self.photoService.updateSaveButtonHandler = { [weak self] state in
             guard let self else { return }
-            self.delegate?.updateSaveButtonState()
+            self.delegate?.updateSaveButtonState(for: state)
         }
 
-        self.photoService.updateDeleteButtonHandler = { [weak self] in
+        self.photoService.updateDeleteButtonHandler = { [weak self] state in
             guard let self else { return }
-            self.delegate?.updateDeleteButtonState()
+            self.delegate?.updateDeleteButtonState(for: state)
         }
 
         self.trashService.didUpdateEmptyTrashHandler = { [weak self] state in

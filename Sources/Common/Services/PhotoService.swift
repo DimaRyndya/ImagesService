@@ -2,19 +2,27 @@ import Foundation
 import UIKit
 import Photos
 
-final class PhotoService {
+final class PhotoService: NSObject {
+
+    // MARK: - Properties
 
     var images: [PHAsset] = []
     var currentIndex = 0
     var presentImageHandler: ((UIImage?) -> Void)?
     var imageDeleteHandler: ((PHAsset) -> Void)?
-    var updateSaveButtonHandler: (() -> Void)?
-    var updateDeleteButtonHandler: (() -> Void)?
+    var updateSaveButtonHandler: ((SaveButtonState) -> Void)?
+    var updateDeleteButtonHandler: ((DeleteButtonState) -> Void)?
     var deniedAlertHandler: (() -> Void)?
+    var emptyStateHandler: (() -> Void)?
+
+    // MARK: - Public
 
     func getPhotos() {
         requestPhotoLibraryAccess()
+        PHPhotoLibrary.shared().register(self)
     }
+
+    // MARK: - Private
 
     private func requestPhotoLibraryAccess() {
         PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
@@ -33,16 +41,12 @@ final class PhotoService {
             break
         case .denied:
             deniedAlertHandler?()
-            updateDeleteButtonHandler?()
-            updateSaveButtonHandler?()
+            updateDeleteButtonHandler?(.disabled)
+            updateSaveButtonHandler?(.disabled)
         case .authorized:
             fetchPhotos()
         case .limited:
             fetchPhotos()
-            
-            if images.count == 1 {
-                updateSaveButtonHandler?()
-            }
         @unknown default:
             break
         }
@@ -52,10 +56,21 @@ final class PhotoService {
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         let assets = PHAsset.fetchAssets(with: .image, options: fetchOptions)
-        images = assets.objects(at: IndexSet(integersIn: currentIndex..<assets.count))
+        images = assets.objects(at: IndexSet(integersIn: 0..<assets.count))
 
-        if !images.isEmpty {
+        if images.count > 1 {
             displayPhoto(at: currentIndex)
+            updateDeleteButtonHandler?(.enabled)
+            updateSaveButtonHandler?(.enabled)
+        } else if images.count == 1 {
+            displayPhoto(at: currentIndex)
+            updateSaveButtonHandler?(.disabled)
+            updateDeleteButtonHandler?(.enabled)
+        } else {
+            let image = UIImage(named: "empty_state_icon")
+            presentImageHandler?(image)
+            updateDeleteButtonHandler?(.disabled)
+            updateSaveButtonHandler?(.disabled)
         }
     }
 
@@ -97,17 +112,26 @@ final class PhotoService {
         images.remove(at: currentIndex)
 
         if images.count == 1 {
-            updateSaveButtonHandler?()
+            updateSaveButtonHandler?(.disabled)
         }
 
         if images.isEmpty {
             let image = UIImage(named: "empty_state_icon")
             presentImageHandler?(image)
-            updateDeleteButtonHandler?()
+            updateDeleteButtonHandler?(.disabled)
             return
         }
 
         currentIndex -= 1
         showNextPhoto()
+    }
+}
+
+// MARK: - PHPhotoLibrary Change Observer
+
+extension PhotoService: PHPhotoLibraryChangeObserver {
+
+    func photoLibraryDidChange(_ changeInstance: PHChange) {
+        requestPhotoLibraryAccess()
     }
 }
