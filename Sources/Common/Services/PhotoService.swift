@@ -33,11 +33,16 @@ final class PhotoService {
             break
         case .denied:
             deniedAlertHandler?()
-            print("denied")
+            updateDeleteButtonHandler?()
+            updateSaveButtonHandler?()
         case .authorized:
             fetchPhotos()
         case .limited:
             fetchPhotos()
+            
+            if images.count == 1 {
+                updateSaveButtonHandler?()
+            }
         @unknown default:
             break
         }
@@ -57,12 +62,12 @@ final class PhotoService {
     func displayPhoto(at index: Int) {
         guard index >= 0, index < images.count else { return }
 
-        let asset = images[index]
+        let images = images[index]
         let requestOptions = PHImageRequestOptions()
         requestOptions.isSynchronous = true
 
         PHImageManager.default().requestImage(
-            for: asset,
+            for: images,
             targetSize: CGSize(width: 300, height: 450),
             contentMode: .aspectFill,
             options: requestOptions) { image, _ in

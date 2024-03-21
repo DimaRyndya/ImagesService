@@ -34,10 +34,10 @@ final class TrashImagesService {
 
         library.performChanges {
             PHAssetChangeRequest.deleteAssets(photosToDelete as NSFastEnumeration)
-        } completionHandler: { [weak self] success, error in
-            if let error = error {
-                debugPrint(error.localizedDescription)
-            }
+        } completionHandler: { [weak self] success, _ in
+//            if let error = error {
+//                debugPrint(error.localizedDescription)
+//            }
 
             if success {
                 self?.trash.removeAll()
