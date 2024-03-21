@@ -6,21 +6,18 @@ final class TrashImagesService {
     // MARK: - Properties
 
     private(set) var trash: [PHAsset] = []
-    var didUpdateCounterHandler: (() -> Void)?
-    var didUpdateEmptyTrashHandler: ((TrashButtonState) -> Void)?
+    
+    var trashImagesCount: Int {
+        trash.count
+    }
 
     // MARK: - Public
 
     func addToTrash(image: PHAsset) {
-        didUpdateEmptyTrashHandler?(.enabled)
         trash.append(image)
     }
 
-    func countPhotos() -> Int {
-        trash.count
-    }
-
-    func emptyTrash() {
+    func emptyTrash(completion: @escaping () -> Void) {
         let library = PHPhotoLibrary.shared()
         var photosToDelete: [PHAsset] = []
 
@@ -35,11 +32,11 @@ final class TrashImagesService {
         library.performChanges {
             PHAssetChangeRequest.deleteAssets(photosToDelete as NSFastEnumeration)
         } completionHandler: { [weak self] success, _ in
-
-            if success {
-                self?.trash.removeAll()
-                self?.didUpdateCounterHandler?()
-                self?.didUpdateEmptyTrashHandler?(.disabled)
+            DispatchQueue.main.async {
+                if success {
+                    self?.trash.removeAll()
+                }
+                completion()
             }
         }
     }

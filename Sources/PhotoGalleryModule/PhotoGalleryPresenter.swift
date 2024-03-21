@@ -2,24 +2,12 @@ import Foundation
 import UIKit
 
 protocol PhotoGalleryPresenterOutput: AnyObject {
-    func presentPhoto(with image: UIImage)
+    func presentImage(_ image: UIImage)
     func updateCounterUI(counter: Int)
-    func updateSaveButtonState(for state: SaveButtonState)
-    func updateDeleteButtonState(for state: DeleteButtonState)
-    func updateTrashButton(for state: TrashButtonState)
+    func updateSaveButtonState(isEnabled: Bool)
+    func updateDeleteButtonState(isEnabled: Bool)
+    func updateTrashButton(isEnabled: Bool)
     func presentDeniedAlert()
-}
-
-enum TrashButtonState {
-    case enabled, disabled
-}
-
-enum SaveButtonState {
-    case enabled, disabled
-}
-
-enum DeleteButtonState {
-    case enabled, disabled
 }
 
 final class PhotoGalleryPresenter {
@@ -30,6 +18,8 @@ final class PhotoGalleryPresenter {
     let trashService: TrashImagesService
 
     weak var output: PhotoGalleryPresenterOutput?
+
+    var currentIndex = 0
 
     // MARK: - Init
 
@@ -42,59 +32,107 @@ final class PhotoGalleryPresenter {
     // MARK: - Public
 
     func viewIsLoaded() {
-        photoService.getPhotos()
+        photoService.requestPhotoLibraryAccess()
+    }
+
+    private func updatePhotos() {
+        photoService.fetchPhotos() { [weak self] in
+            guard let self else { return }
+            if photoService.photos.count > 1 {
+                let image = photoService.getImage(at: currentIndex)
+                output?.presentImage(image ?? UIImage())
+                output?.updateDeleteButtonState(isEnabled: true)
+                output?.updateSaveButtonState(isEnabled: true)
+            } else if photoService.photos.count == 1 {
+                let image = photoService.getImage(at: currentIndex)
+                output?.presentImage(image ?? UIImage())
+                output?.updateDeleteButtonState(isEnabled: false)
+                output?.updateSaveButtonState(isEnabled: true)
+            } else {
+                presentEmptyImage()
+                output?.updateDeleteButtonState(isEnabled: false)
+                output?.updateSaveButtonState(isEnabled: false)
+            }
+        }
     }
 
     func saveButtonClicked() {
-        photoService.showNextPhoto()
-    }
-
-    func deleteButtonClicked() {
-        photoService.deletePhoto()
+        moveToNextPhoto()
     }
 
     func emptyTrashButtonClicked() {
-        trashService.emptyTrash()
+        trashService.emptyTrash() { [weak self] in
+            guard let self else { return }
+            self.output?.updateCounterUI(counter: self.trashService.trashImagesCount)
+            self.output?.updateTrashButton(isEnabled: false)
+        }
+    }
+
+    func deleteButtonClicked() {
+        guard !photoService.photos.isEmpty else { return }
+
+        let deletedPhoto = photoService.deletePhoto(at: currentIndex)
+        trashService.addToTrash(image: deletedPhoto)
+        output?.updateTrashButton(isEnabled: true)
+        output?.updateCounterUI(counter: trashService.trashImagesCount)
+
+        if photoService.photos.count == 1 {
+            output?.updateSaveButtonState(isEnabled: false)
+        }
+
+        if photoService.photos.isEmpty {
+
+            presentEmptyImage()
+            output?.updateDeleteButtonState(isEnabled: false)
+            return
+        }
+
+        currentIndex -= 1
+        moveToNextPhoto()
+    }
+
+    private func presentEmptyImage() {
+        let image = UIImage(named: "empty_state_icon")
+        self.output?.presentImage(image ?? UIImage())
+    }
+
+    private func moveToNextPhoto() {
+        guard !photoService.photos.isEmpty else { return }
+
+        currentIndex += 1
+        
+        let image: UIImage?
+
+        if currentIndex < photoService.photos.count {
+            image = photoService.getImage(at: currentIndex)
+        } else {
+            currentIndex = 0
+            image = photoService.getImage(at: currentIndex)
+        }
+        output?.presentImage(image ?? UIImage())
     }
 
     // MARK: - Private
 
     private func configureCompletionHandlers() {
-        self.photoService.deniedAlertHandler = { [weak self] in
+        photoService.handlePhotoLibraryStatus = { [weak self] status in
             guard let self else { return }
-            self.output?.presentDeniedAlert()
-        }
-
-        self.photoService.imageDeleteHandler = { [weak self] image in
-            guard let self else { return }
-
-            self.trashService.addToTrash(image: image)
-            self.output?.updateCounterUI(counter: self.trashService.countPhotos())
-        }
-
-        self.photoService.updateSaveButtonHandler = { [weak self] state in
-            guard let self else { return }
-            self.output?.updateSaveButtonState(for: state)
-        }
-
-        self.photoService.updateDeleteButtonHandler = { [weak self] state in
-            guard let self else { return }
-            self.output?.updateDeleteButtonState(for: state)
-        }
-
-        self.trashService.didUpdateEmptyTrashHandler = { [weak self] state in
-            guard let self else { return }
-            self.output?.updateTrashButton(for: state)
-        }
-
-        self.photoService.presentImageHandler = { image in
-            guard let image else { return }
-            self.output?.presentPhoto(with: image)
-        }
-
-        trashService.didUpdateCounterHandler = { [weak self] in
-            guard let self else { return }
-            self.output?.updateCounterUI(counter: self.trashService.countPhotos())
+            switch status {
+            case .notDetermined:
+                break
+            case .restricted:
+                break
+            case .denied:
+                output?.presentDeniedAlert()
+                output?.updateDeleteButtonState(isEnabled: false)
+                output?.updateSaveButtonState(isEnabled: false)
+            case .authorized:
+                updatePhotos()
+            case .limited:
+                updatePhotos()
+            @unknown default:
+                break
+            }
         }
     }
 }

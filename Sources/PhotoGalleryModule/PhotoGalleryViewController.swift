@@ -236,7 +236,7 @@ extension PhotoGalleryViewController: PhotoGalleryPresenterOutput {
         present(alert, animated: true)
     }
 
-    func presentPhoto(with image: UIImage) {
+    func presentImage(_ image: UIImage) {
         DispatchQueue.main.async {
             self.photoImageView.image = image
         }
@@ -248,37 +248,21 @@ extension PhotoGalleryViewController: PhotoGalleryPresenterOutput {
         }
     }
 
-    func updateSaveButtonState(for state: SaveButtonState) {
+    func updateSaveButtonState(isEnabled: Bool) {
         DispatchQueue.main.async {
-            switch state {
-            case .enabled:
-                self.saveButton.isEnabled = true
-            case .disabled:
-                self.saveButton.isEnabled = false
-            }
+            self.saveButton.isEnabled = isEnabled
         }
     }
 
-    func updateDeleteButtonState(for state: DeleteButtonState) {
+    func updateDeleteButtonState(isEnabled: Bool) {
         DispatchQueue.main.async {
-            switch state {
-            case .enabled:
-                self.deleteButton.isEnabled = true
-            case .disabled:
-                self.deleteButton.isEnabled = false
-            }
+            self.deleteButton.isEnabled = isEnabled
         }
     }
 
-    func updateTrashButton(for state: TrashButtonState) {
-        DispatchQueue.main.async {
-            switch state {
-            case .enabled:
-                self.emptyTrashButton.isEnabled = true
-            case .disabled:
-                self.emptyTrashButton.isEnabled = false
-            }
-        }
+    func updateTrashButton(isEnabled: Bool) {
+        self.emptyTrashButton.isEnabled = isEnabled
+
     }
 }
 
