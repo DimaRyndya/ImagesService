@@ -55,7 +55,7 @@ final class PhotoGalleryViewController: UIViewController {
     }()
 
     private lazy var emptyTrashButton: UIButton = {
-        let button = UIButton(type: .custom)
+        let button = UIButton()
         button.isEnabled = false
         button.setImage(UIImage(named: "empty_trash_icon"), for: .normal)
         button.setTitle("Empty Trash", for: .normal)
@@ -234,12 +234,14 @@ extension PhotoGalleryViewController: PhotoGalleryPresenterOutput {
     func updateSaveButtonState(isEnabled: Bool) {
         DispatchQueue.main.async {
             self.saveButton.isEnabled = isEnabled
+            self.saveButton.backgroundColor = isEnabled ? .systemMint : .systemMint.withAlphaComponent(0.5)
         }
     }
 
     func updateDeleteButtonState(isEnabled: Bool) {
         DispatchQueue.main.async {
             self.deleteButton.isEnabled = isEnabled
+            self.deleteButton.backgroundColor = isEnabled ? .systemRed: .systemRed.withAlphaComponent(0.5)
         }
     }
 
