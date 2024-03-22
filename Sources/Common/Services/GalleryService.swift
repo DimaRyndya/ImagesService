@@ -7,10 +7,12 @@ import Photos
 protocol GalleryServiceProtocol: AnyObject {
     var handlePhotoLibraryStatus: ((PHAuthorizationStatus) -> Void)? { get set }
     var photosCount: Int { get }
+    var photos: [PHAsset] { get }
     func requestPhotoLibraryAccess()
-    func fetchPhotos(trash: [PHAsset])
+    func fetchPhotos()
     func getImage(at index: Int, completion: @escaping (UIImage?) -> Void)
     func deletePhoto(at index: Int) -> PHAsset
+    func deletePhoto(_ photo: PHAsset)
 }
 
 // MARK: - Implementation
@@ -20,7 +22,7 @@ final class GalleryService: NSObject, GalleryServiceProtocol {
     var handlePhotoLibraryStatus: ((PHAuthorizationStatus) -> Void)?
     var photosCount: Int { photos.count }
 
-    private var photos: [PHAsset] = []
+    private(set) var photos: [PHAsset] = []
     private let imageManager = PHImageManager.default()
 
     // MARK: - Init
@@ -40,19 +42,10 @@ final class GalleryService: NSObject, GalleryServiceProtocol {
         }
     }
 
-    func fetchPhotos(trash: [PHAsset]) {
+    func fetchPhotos() {
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         let assets = PHAsset.fetchAssets(with: .image, options: fetchOptions)
-
-        if !trash.isEmpty {
-            photos = assets.objects(at: IndexSet(integersIn: 0..<assets.count))
-                .filter { asset in
-                    !trash.contains { $0.localIdentifier == asset.localIdentifier }
-                }
-            return
-        }
-
         photos = assets.objects(at: IndexSet(integersIn: 0..<assets.count))
     }
 
@@ -74,8 +67,13 @@ final class GalleryService: NSObject, GalleryServiceProtocol {
             }
     }
 
-    func deletePhoto(at index: Int) -> PHAsset {
+    @discardableResult func deletePhoto(at index: Int) -> PHAsset {
         photos.remove(at: index)
+    }
+
+    func deletePhoto(_ photo: PHAsset) {
+        guard let index = photos.firstIndex(of: photo) else { return }
+        deletePhoto(at: index)
     }
 }
 

@@ -72,8 +72,8 @@ final class PhotoGalleryPresenter: PhotoGalleryPresenterInput {
     func emptyTrashButtonTapped() {
         trashService.emptyTrash() { [weak self] isSuccess in
             guard let self else { return }
-            self.output?.updateCounterUI(counter: self.trashService.trashImagesCount)
-            self.output?.updateTrashButton(isEnabled: !isSuccess)
+            output?.updateCounterUI(counter: trashService.trashImagesCount)
+            output?.updateTrashButton(isEnabled: !isSuccess)
         }
     }
 
@@ -122,7 +122,19 @@ final class PhotoGalleryPresenter: PhotoGalleryPresenterInput {
     }
 
     private func updatePhotos() {
-        galleryService.fetchPhotos(trash: trashService.trash)
+        galleryService.fetchPhotos()
+
+        /// removing from trash photos which are not accessible from settings(due to change limited photos) but already in trash
+        trashService.trash.filter {
+            !galleryService.photos.contains($0)
+        }.forEach {
+            trashService.deleteFromTrash($0)
+        }
+
+        /// removing from gallery service photos which are in trash
+        trashService.trash.forEach {
+            galleryService.deletePhoto($0)
+        }
 
         if galleryService.photosCount >= 1 {
             galleryService.getImage(at: currentIndex) { [weak self] image in
@@ -136,5 +148,7 @@ final class PhotoGalleryPresenter: PhotoGalleryPresenterInput {
             output?.updateDeleteButtonState(isEnabled: false)
             output?.updateSaveButtonState(isEnabled: false)
         }
+        output?.updateCounterUI(counter: trashService.trashImagesCount)
+        output?.updateTrashButton(isEnabled: trashService.trashImagesCount > 0)
     }
 }

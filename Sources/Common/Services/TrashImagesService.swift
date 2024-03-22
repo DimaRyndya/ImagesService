@@ -7,6 +7,7 @@ protocol TrashImagesServiceProtocol {
     var trashImagesCount: Int { get }
     var trash: [PHAsset] { get }
     func addToTrash(image: PHAsset)
+    func deleteFromTrash(_ photo: PHAsset)
     func emptyTrash(completion: @escaping (Bool) -> Void)
 }
 
@@ -22,6 +23,11 @@ final class TrashImagesService: TrashImagesServiceProtocol {
 
     func addToTrash(image: PHAsset) {
         trash.append(image)
+    }
+
+    func deleteFromTrash(_ photo: PHAsset) {
+        guard let index = trash.firstIndex(of: photo) else { return }
+        trash.remove(at: index)
     }
 
     func emptyTrash(completion: @escaping (Bool) -> Void) {
