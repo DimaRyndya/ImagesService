@@ -5,6 +5,7 @@ import Photos
 
 protocol TrashImagesServiceProtocol {
     var trashImagesCount: Int { get }
+    var trash: [PHAsset] { get }
     func addToTrash(image: PHAsset)
     func emptyTrash(completion: @escaping (Bool) -> Void)
 }
@@ -15,7 +16,7 @@ final class TrashImagesService: TrashImagesServiceProtocol {
 
     var trashImagesCount: Int { trash.count }
 
-    private var trash: [PHAsset] = []
+    private(set) var trash: [PHAsset] = []
 
     // MARK: - Public
 

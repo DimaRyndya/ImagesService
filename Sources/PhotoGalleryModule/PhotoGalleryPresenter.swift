@@ -122,7 +122,7 @@ final class PhotoGalleryPresenter: PhotoGalleryPresenterInput {
     }
 
     private func updatePhotos() {
-        galleryService.fetchPhotos()
+        galleryService.fetchPhotos(trash: trashService.trash)
 
         if galleryService.photosCount >= 1 {
             galleryService.getImage(at: currentIndex) { [weak self] image in

@@ -13,7 +13,6 @@ final class PhotoGalleryViewController: UIViewController {
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 25
-        imageView.layer.masksToBounds = true
         imageView.isUserInteractionEnabled = true
         return imageView
     }()
@@ -64,6 +63,7 @@ final class PhotoGalleryViewController: UIViewController {
         button.tintColor = .trashButtonTitle
         button.backgroundColor = UIColor(red: 78 / 255, green: 86 / 255, blue: 130 / 255, alpha: 1)
         button.layer.cornerRadius = 12
+        button.clipsToBounds = true
         var configuration = UIButton.Configuration.plain()
         configuration.imagePadding = 8
         button.configuration = configuration

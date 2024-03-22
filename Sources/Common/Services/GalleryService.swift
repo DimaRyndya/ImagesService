@@ -8,7 +8,7 @@ protocol GalleryServiceProtocol: AnyObject {
     var handlePhotoLibraryStatus: ((PHAuthorizationStatus) -> Void)? { get set }
     var photosCount: Int { get }
     func requestPhotoLibraryAccess()
-    func fetchPhotos()
+    func fetchPhotos(trash: [PHAsset])
     func getImage(at index: Int, completion: @escaping (UIImage?) -> Void)
     func deletePhoto(at index: Int) -> PHAsset
 }
@@ -40,10 +40,19 @@ final class GalleryService: NSObject, GalleryServiceProtocol {
         }
     }
 
-    func fetchPhotos() {
+    func fetchPhotos(trash: [PHAsset]) {
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         let assets = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+
+        if !trash.isEmpty {
+            photos = assets.objects(at: IndexSet(integersIn: 0..<assets.count))
+                .filter { asset in
+                    !trash.contains { $0.localIdentifier == asset.localIdentifier }
+                }
+            return
+        }
+
         photos = assets.objects(at: IndexSet(integersIn: 0..<assets.count))
     }
 
