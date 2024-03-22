@@ -128,8 +128,8 @@ final class PhotoGalleryPresenter: PhotoGalleryPresenterInput {
             galleryService.getImage(at: currentIndex) { [weak self] image in
                 guard let self else { return }
                 output?.presentImage(image)
-                output?.updateDeleteButtonState(isEnabled: galleryService.photosCount > 1)
-                output?.updateSaveButtonState(isEnabled: true)
+                output?.updateDeleteButtonState(isEnabled: galleryService.photosCount >= 1)
+                output?.updateSaveButtonState(isEnabled: galleryService.photosCount > 1)
             }
         } else {
             presentEmptyImage()
