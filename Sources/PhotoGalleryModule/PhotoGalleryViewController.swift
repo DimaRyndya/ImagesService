@@ -58,8 +58,10 @@ final class PhotoGalleryViewController: UIViewController {
         let button = UIButton()
         button.isEnabled = false
         button.setImage(UIImage(named: "empty_trash_icon"), for: .normal)
+        button.alpha = 0.5
         button.setTitle("Empty Trash", for: .normal)
-        button.setTitleColor(UIColor(red: 160 / 255, green: 168 / 255, blue: 212 / 255, alpha: 1), for: .normal)
+        button.setTitleColor(.trashButtonTitle, for: .normal)
+        button.setTitleColor(.trashButtonTitle, for: .disabled)
         button.backgroundColor = UIColor(red: 78 / 255, green: 86 / 255, blue: 130 / 255, alpha: 1)
         button.layer.cornerRadius = 12
         var configuration = UIButton.Configuration.plain()
@@ -248,6 +250,7 @@ extension PhotoGalleryViewController: PhotoGalleryPresenterOutput {
     func updateTrashButton(isEnabled: Bool) {
         DispatchQueue.main.async {
             self.emptyTrashButton.isEnabled = isEnabled
+            self.emptyTrashButton.alpha = isEnabled ? 1 : 0.5
         }
     }
 }
